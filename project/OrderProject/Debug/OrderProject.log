@@ -1,0 +1,12 @@
+﻿  Goods.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(57,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(51,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(305,17): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(327,15): warning C4129:  “%”: 不可识别的字符转义序列
+  OrderProject.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(340,16): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(57,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\User.h(73,43): warning C4114:  多次使用同一类型限定符
+  正在生成代码...
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.h(70,45): warning C4114:  多次使用同一类型限定符
+  OrderProject.vcxproj -> D:\C\git\C++\CPlusPlus\project\Debug\OrderProject.exe
