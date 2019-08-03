@@ -18,6 +18,9 @@ typedef struct Goods
 	//ø‚¥Ê
 	int stock;
 
+
+	//…Ãº“Id
+	int userId;
 }Goods;
 
 typedef struct GoodsNode {

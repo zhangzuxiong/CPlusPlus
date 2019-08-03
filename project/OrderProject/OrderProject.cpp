@@ -4,8 +4,6 @@
 
 #include "OrderQueue.h"
 
-
-
 //往数组中添加一个数
 void insertArray(int* p, int num, int length) {
 	if (p == NULL)
@@ -61,6 +59,7 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 	int del = 0;
 	int j = 0;
 	Goods* goods = NULL;
+	Goods newGoods = { 0 };
 	Order* order = NULL;
 
 	OrderQueue queue = { 0 };
@@ -105,25 +104,26 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			while (true)
 			{
 				system("cls");
-				Goods goods = { 0 };
+				newGoods = { 0 };
 				printf("请输入商品ID:");
-				scanf(" %d", &goods.goodsId);
+				scanf(" %d", &newGoods.goodsId);
 
 				printf("请输入商品价格:");
-				scanf(" %d", &goods.price);
+				scanf(" %d", &newGoods.price);
 
 				printf("请输入商品名称:");
-				scanf(" %s", &goods.name);
+				scanf(" %s", &newGoods.name);
 
 				printf("请输入商品库存:");
-				scanf(" %d", &goods.stock);
+				scanf(" %d", &newGoods.stock);
 
+				newGoods.userId = user->userId;
 
 				//将商品ID保存到商家商品数组
-				insertArray(user->goodsList, goods.goodsId, SIZE);
+				insertArray(user->goodsList, newGoods.goodsId, SIZE);
 				//user->goodsList[goodsList->count + 1] = goods.goodsId;
-
-				insertPositionGoods(goodsList, goodsList->count + 1, goods);
+				
+				insertPositionGoods(goodsList, goodsList->count + 1, newGoods);
 
 				printf("\n是否继续添加商品(1:继续,0:不继续):");
 				int f = 0;
@@ -185,6 +185,7 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			break;
 
 		case 0:
+			clearOrderQueue(&queue);
 			return;
 			break;
 		default:
@@ -205,6 +206,7 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 	int j = 0;
 	int flag = 1;
 	int in = 0;
+	int pre = 0;
 	int n = 0;
 	Order order = { 0 };
 	Goods* goods = NULL;
@@ -240,6 +242,7 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 
 			break;
 
+		//一个订单只能购买一个用户的商品
 		case 3:
 			system("cls");
 			//下单
@@ -247,13 +250,13 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 			printf("请输入订单号:");
 			scanf(" %d", &order.orderId);
 
-			printf("请输入商家ID:");
-			scanf(" %d", &order.businessId);
 
 			printf("请输入下单时间:");
 			scanf(" %s", &order.createDate);
 			order.status = 1;
 			order.userId = user->userId;
+
+			n = 0;
 
 			i = 1;
 			while (i)
@@ -267,6 +270,8 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 				if (searchGoodsById(*goodsList, in))
 				{
 					goods = searchGoodsById(*goodsList, in);
+					n = goods->userId;
+					pre = n;
 					printf("请输入购买数量:");
 					j = 0;
 					scanf(" %d", &j);
@@ -276,6 +281,10 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 					}
 					else
 					{
+						
+						order.businessId = n;
+
+
 						goods->stock = goods->stock - j;
 						insertArray(order.goodsId, in, SIZE);
 						insertArray(order.count, j, SIZE);
@@ -438,6 +447,7 @@ void rider(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 			order.status = 3;
 			break;
 		case 0:
+			clearOrderQueue(&queue);
 			return;
 		default:
 			break;

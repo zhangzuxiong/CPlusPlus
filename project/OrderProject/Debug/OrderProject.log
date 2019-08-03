@@ -1,7 +1,25 @@
-﻿  User.cpp
+﻿  Goods.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(60,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(51,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(305,17): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(327,15): warning C4129:  “%”: 不可识别的字符转义序列
+  Order.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.cpp(340,16): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(60,45): warning C4114:  多次使用同一类型限定符
 D:\C\git\C++\CPlusPlus\project\OrderProject\User.h(73,43): warning C4114:  多次使用同一类型限定符
-D:\C\git\C++\CPlusPlus\project\OrderProject\User.cpp(51,43): warning C4114:  多次使用同一类型限定符
-D:\C\git\C++\CPlusPlus\project\OrderProject\User.cpp(404,17): warning C4129:  “%”: 不可识别的字符转义序列
-D:\C\git\C++\CPlusPlus\project\OrderProject\User.cpp(453,15): warning C4129:  “%”: 不可识别的字符转义序列
-D:\C\git\C++\CPlusPlus\project\OrderProject\User.cpp(481,16): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.h(70,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.cpp(51,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.cpp(434,17): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.cpp(473,15): warning C4129:  “%”: 不可识别的字符转义序列
+  OrderProject.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.cpp(495,16): warning C4129:  “%”: 不可识别的字符转义序列
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(60,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\User.h(73,43): warning C4114:  多次使用同一类型限定符
+  OrderQueue.cpp
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.h(70,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Goods.h(60,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\User.h(73,43): warning C4114:  多次使用同一类型限定符
+  正在生成代码...
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.h(70,45): warning C4114:  多次使用同一类型限定符
+D:\C\git\C++\CPlusPlus\project\OrderProject\Order.h(70,45): warning C4114: D:\C\git\C++\CPlusPlus\project\OrderProject\OrderQueue.cpp(134) : warning C4172: 返回局部变量或临时变量的地址: temp
   OrderProject.vcxproj -> D:\C\git\C++\CPlusPlus\project\Debug\OrderProject.exe
