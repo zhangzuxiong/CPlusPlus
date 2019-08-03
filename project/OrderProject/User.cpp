@@ -345,6 +345,8 @@ void registerUser(UserList* p) {
 
 		printf("请输入联系方式:");
 		scanf(" %s", user.phone);
+
+		strcpy(user.address, "111");
 	}
 
 	insertPositionUser(p, p->count + 1, user);

@@ -61,18 +61,23 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 	int del = 0;
 	int j = 0;
 	Goods* goods = NULL;
+	Order* order = NULL;
 
 	OrderQueue queue = { 0 };
 	initOrderQueue(&queue);
 
 	while (user->orderList[i] > 0)
 	{
-		putOrderQueue(&queue, *searchOrderById(*orderList, user->orderList[i++]));
+		order = searchOrderById(*orderList, user->orderList[i++]);
+		if (order!=NULL)
+		{
+			putOrderQueue(&queue, *order);
+		}
 	}
 
 	while (flag)
 	{
-		printf("\n\n1.查看商品   \n2.添加商品   \n3.删除商品   \n4.查看订单\n");
+		printf("\n\n1.查看商品   \n2.添加商品   \n3.删除商品   \n4.查看订单  \n5.修改订单\n");
 		printf("0.退出    \n请选择:");
 		scanf(" %d", &flag);
 
@@ -146,7 +151,7 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			j = 0;
 			while (user->orderList[j] != 0 && j < SIZE)
 			{
-				Order* order = searchOrderById(*orderList, user->orderList[j]);
+				order = searchOrderById(*orderList, user->orderList[j]);
 				printOrder(*userList, *order);
 				i = 0;
 				while (order->goodsId[i] > 0)
@@ -156,6 +161,25 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 				}
 				printf("\n\n");
 				j++;
+			}
+
+			break;
+
+
+		case 5:
+			//修改订单
+			//打印订单信息
+			printOrderList(*userList, *goodsList, queue.list);
+
+			i = 0;
+			printf("\n请输入修改的订单ID:");
+			scanf(" %d", &i);
+
+			order = searchOrderById(queue.list, i);
+			if (order!=NULL)
+			{
+				//修改订单收货地址,收件地址存放在用户信息中
+				printf("请输入新的收货地址:");
 			}
 
 			break;
