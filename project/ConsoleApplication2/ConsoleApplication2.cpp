@@ -1,239 +1,344 @@
-﻿// ConsoleApplication2.cpp : 此文件包含 "main" 函数。程序执行将在此处开始并结束。
-//
-
-
-#include <iostream>
-
+﻿#include <iostream>
+#include <windows.h>
+#include <ctime>
 using namespace std;
 
-class A {
+int const ROW = 4;
+int const COL = 4;
+int game[ROW][COL] = { 0 };
 
-private:
-	int num;
-	int value;
+//上下左右
+int const UP = 1;
+int const DOWN = 2;
+int const LEFT = 3;
+int const RIGHT = 4;
 
-public:
+//游戏所处的状态
+int const GAME_OVER = 1;
+int const GAME_WIN = 2;
+int const GAME_CONTINUE = 3;
 
-	A() :num(0), value(0) {
-
-	}
-
-	A(int a, int b) :num(a), value(b) {
-
-	}
-
-	A(const A& that) : num(that.num), value(that.value) {
-		cout << "拷贝函数" << endl;
-	}
-
-	//重载  +
-	A operator+(const A& a) const {
-		A temp;
-		temp.num = num + a.num;
-		temp.value = value + a.value;
-		return temp;
-	}
-
-
-	//友元函数重载  -
-	friend A operator-(const A& a1, const A& a2);
-
-	//重载 *
-	A operator*(const A& a)const {
-		return A(this->num * a.num, this->value * a.value);
-	}
-
-
-	//重载  /   取余
-	A operator/(const A& a) const {
-		return A(this->num / a.num, this->value / a.value);
-	}
-
-
-	//重载  %
-	A operator%(const A& a) const {
-		return A(this->num % a.num, this->value % a.value);
-
-	}
-
-
-	//重载  =  左边不能加  const  左值要修改因此不能加const
-	A operator=(const A& a) {
-		this->num = a.num;
-		this->value = a.value;
-		return A(a.num, a.value);
-	}
-
-
-	//重载  ==
-	bool operator==(const A& a) const {
-		return (this->num == a.num) && (this->value == a.value);
-	}
-
-	//重载  !=
-	bool operator!=(const A& a) const {
-		return (this->num != a.num) || (this->value != a.value);
-	}
-
-
-	//重载 <
-	bool operator<(const A& a) const {
-		return (this->num < a.num) && (this->value < a.num);
-	}
-
-
-	//重载 >
-	bool operator>(const A& a) const {
-		return ((this->num > a.num) && (this->value > a.num));
-	}
-
-	//重载 >=
-	bool operator>=(const A& a) const {
-		return (this->num >= a.num) && (this->value >= a.num);
-	}
-
-	//重载 <=
-	bool operator<=(const A& a) const {
-		return (this->num <= a.num) && (this->value <= a.num);
-	}
-
-	//重载 +=
-	void operator+=(const A& a) {
-		this->num += a.num;
-		this->value += a.value;
-	}
-
-
-	//重载 -=
-	void operator-=(const A& a) {
-		this->num -= a.num;
-		this->value -= a.value;
-	}
-
-
-	//重载 /=
-	void operator/=(const A& a) {
-		this->num /= a.num;
-		this->value /= a.value;
-	}
-
-	//重载 *=
-	void operator*=(const A& a) {
-		this->num *= a.num;
-		this->value *= a.value;
-	}
-
-	//重载 %=
-	void operator%=(const A& a) {
-		this->num %= a.num;
-		this->value %= a.value;
-	}
-
-
-	//重载输出 <<
-	friend void operator<<(ostream& os, const A& a);
-
-	//重载输入 >>
-	friend void operator>>(istream& in, A& a);
-
-
-
-	/*static A operator/(const A& a1, const A& a2) {
-		return A(a1.num*a2.num,a1.value*a2.value);
-	}*/
-
-	void print() const {
-		cout << "num=" << num << ",value=" << value << endl;
-	}
+enum GameNum
+{
+	Game_2 = 2,
+	Game_4 = 4,
+	Game_8 = 8,
+	Game_16 = 16,
+	Game_32 = 32,
+	Game_64 = 64,
+	Game_128 = 128,
+	Game_256 = 256,
+	Game_512 = 512,
+	Game_1024 = 1024,
+	Game_2048 = 2048,
 };
 
-/*A A::operator/(const A& a1, const A& a2) {
-	return A(a1.num * a2.num, a1.value * a2.value);
-}*/
-
-A operator-(const A& a1, const A& a2) {
-	A temp;
-	temp.num = a1.num - a2.num;
-	temp.value = a1.value - a2.value;
-	return temp;
+//打印所得的数组
+void Print()
+{
+	system("cls");
+	cout << "*****************  2048 控 制 台 版  ******************" << endl;
+	cout << "*****************  By Tanzf (Intern) ******************" << endl << endl;
+	for (int i = 0; i < ROW; ++i)
+	{
+		cout << "---------------------------------" << endl;
+		for (int j = 0; j < COL; ++j)
+		{
+			if (game[i][j] == 0)
+			{
+				cout << "|   \t";
+			}
+			else
+			{
+				cout << "|   " << game[i][j] << "\t";
+			}
+		}
+		cout << "|" << endl;
+	}
+	cout << "---------------------------------" << endl;
 }
-void operator<<(ostream& os, const A& a) {
-	os << "num=" << a.num << ",value=" << a.value << endl;
+
+
+bool CreateNumber()
+{
+	int x = -1;
+	int y = -1;
+	int times = 0;
+	int maxTimes = ROW * COL;
+	//三分之二的概率生成2，三分之一的概率生成4
+	int whitch = rand() % 4;
+	do
+	{
+		x = rand() % ROW;
+		y = rand() % COL;
+		++times;
+	} while (game[x][y] != 0 && times <= maxTimes);
+
+	//说明格子已经满了
+	if (times >= maxTimes)
+	{
+		return false;
+	}
+	else
+	{
+		GameNum num;
+		if (whitch == 0)
+		{
+			num = Game_4;
+		}
+		else if (whitch)
+		{
+			num = Game_2;
+		}
+		game[x][y] = num;
+	}
+
+	return true;
 }
 
-void operator>>(istream& in, A& a) {
-	in >> a.num;
-	in >> a.value;
+void Process(int direction)
+{
+	switch (direction)
+	{
+	case UP:
+		//最上面一行不动
+		for (int row = 1; row < ROW; ++row)
+		{
+			for (int crow = row; crow >= 1; --crow)
+			{
+				for (int col = 0; col < COL; ++col)
+				{
+					//上一个格子为空
+					if (game[crow - 1][col] == 0)
+					{
+						game[crow - 1][col] = game[crow][col];
+						game[crow][col] = 0;
+					}
+					else
+					{
+						//合并
+						if (game[crow - 1][col] == game[crow][col])
+						{
+							game[crow - 1][col] *= 2;
+							game[crow][col] = 0;
+						}
+
+					}
+				}
+			}
+		}
+		break;
+	case DOWN:
+		//最下面一行不动
+		for (int row = ROW - 2; row >= 0; --row)
+		{
+			for (int crow = row; crow < ROW - 1; ++crow)
+			{
+				for (int col = 0; col < COL; ++col)
+				{
+					//上一个格子为空
+					if (game[crow + 1][col] == 0)
+					{
+						game[crow + 1][col] = game[crow][col];
+						game[crow][col] = 0;
+					}
+					else
+					{
+						//合并
+						if (game[crow + 1][col] == game[crow][col])
+						{
+							game[crow + 1][col] *= 2;
+							game[crow][col] = 0;
+						}
+
+					}
+				}
+			}
+		}
+		break;
+	case LEFT:
+		//最左边一列不动
+		for (int col = 1; col < COL; ++col)
+		{
+			for (int ccol = col; ccol >= 1; --ccol)
+			{
+				for (int row = 0; row < ROW; ++row)
+				{
+					//上一个格子为空
+					if (game[row][ccol - 1] == 0)
+					{
+						game[row][ccol - 1] = game[row][ccol];
+						game[row][ccol] = 0;
+					}
+					else
+					{
+						//合并
+						if (game[row][ccol - 1] == game[row][ccol])
+						{
+							game[row][ccol - 1] *= 2;
+							game[row][ccol] = 0;
+						}
+
+					}
+				}
+			}
+		}
+		break;
+	case RIGHT:
+		//最右边一列不动
+		for (int col = COL - 2; col >= 0; --col)
+		{
+			for (int ccol = col; ccol <= COL - 2; ++ccol)
+			{
+				for (int row = 0; row < ROW; ++row)
+				{
+					//上一个格子为空
+					if (game[row][ccol + 1] == 0)
+					{
+						game[row][ccol + 1] = game[row][ccol];
+						game[row][ccol] = 0;
+					}
+					else
+					{
+						//合并
+						if (game[row][ccol + 1] == game[row][ccol])
+						{
+							game[row][ccol + 1] *= 2;
+							game[row][ccol] = 0;
+						}
+
+					}
+				}
+			}
+		}
+		break;
+	}
+
 }
 
+//处理输入输出，返回上下左右
+int Input()
+{
+	//读取上下左右四个方向键
+	int upArrow = 0;
+	int downArrow = 0;
+	int leftArrow = 0;
+	int rightArrow = 0;
+	int direction = 0;
+	while (true)
+	{
+		upArrow = GetAsyncKeyState(VK_UP);
+		downArrow = GetAsyncKeyState(VK_DOWN);
+		leftArrow = GetAsyncKeyState(VK_LEFT);
+		rightArrow = GetAsyncKeyState(VK_RIGHT);
+
+		if (upArrow)
+		{
+			direction = UP;
+			break;
+		}
+		else if (downArrow)
+		{
+			direction = DOWN;
+			break;
+		}
+		else if (leftArrow)
+		{
+			direction = LEFT;
+			break;
+		}
+		else if (rightArrow)
+		{
+			direction = RIGHT;
+			break;
+		}
+
+		Sleep(100);
+	}
+
+	return direction;
+}
+
+//判断游戏状态,判断是否可以继续游戏
+int Judge()
+{
+	//赢得游戏
+	for (int i = 0; i < ROW; ++i)
+	{
+		for (int j = 0; j < COL; ++j)
+		{
+			if (game[i][j] == 2048)
+			{
+				return GAME_WIN;
+				break;
+			}
+		}
+	}
+
+	//横向检查
+	for (int i = 0; i < ROW; ++i)
+	{
+		for (int j = 0; j < COL - 1; ++j)
+		{
+			if (!game[i][j] || (game[i][j] == game[i][j + 1]))
+			{
+				return GAME_CONTINUE;
+				break;
+			}
+		}
+	}
+	//纵向检查
+	for (int j = 0; j < COL; ++j)
+	{
+		for (int i = 0; i < ROW - 1; ++i)
+		{
+			if (!game[i][j] || (game[i][j] == game[i + 1][j]))
+			{
+				return GAME_CONTINUE;
+				break;
+			}
+		}
+	}
+
+	//不符合上述两种状况，游戏结束
+	return GAME_OVER;
+
+}
 
 int main()
 {
+	//设置一个随机数种子
+	srand((unsigned int)time(0));
+	CreateNumber();
+	CreateNumber();
+	Print();
+	int direction = 0;
+	int gameState = -1;
+	while (true)
+	{
+		direction = Input();
 
-	const A a1(10, 20);
-	cout << "a1:";
-	a1.print();
-
-	const A a2(5, 10);
-	cout << "a2:";
-	a2.print();
-
-	A a3;
-
-	A a4;
-
-	a3 = a4 = a1;
-
-	cout << a3;
-	cout << a4;
-
-	a3 = a1 + a2;
-	cout << a3;
-
-	a3 = a1 - a2;
-	cout << a3;
-
-	a3 = a1 * a2;
-	cout << a3;
-
-	a3 = a1 / a2;
-	cout << a3;
-
-	a3 = a1 % a2;
-	cout << a3;
-
-	cout << (a1 > a2) << endl;
-	cout << (a1 < a2) << endl;
-	cout << (a1 >= a2) << endl;
-	cout << (a1 <= a2) << endl;
-	cout << (a1 == a2) << endl;
-	cout << (a1 != a2) << endl;
-
-	a3 = a2;
-	a3 += a1;
-	cout << a3;
-
-	a3 = a2;
-	a3 -= a1;
-	cout << a3;
-
-	a3 = a2;
-	a3 *= a1;
-	cout << a3;
-
-	a3 = a2;
-	a3 /= a1;
-	cout << a3;
-
-
-	a3 = a2;
-	a3 %= a1;
-	cout << a3;
-
-
-	cout << typeid(A).name() << endl;
+		gameState = Judge();
+		if (direction && gameState == GAME_CONTINUE)
+		{
+			Process(direction);
+			CreateNumber();
+			Print();
+			Sleep(100);
+		}
+		else if (gameState == GAME_WIN)
+		{
+			Print();
+			cout << "You Win！" << endl;
+			break;
+		}
+		else if (gameState == GAME_OVER)
+		{
+			Print();
+			cout << "You lose!" << endl;
+			break;
+		}
+	}
 
 	return 0;
 }
-
-
