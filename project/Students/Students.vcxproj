@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayList.h" />
+    <ClInclude Include="ArrayList.hpp" />
     <ClInclude Include="Student.h" />
     <ClInclude Include="LinkList.h" />
   </ItemGroup>
