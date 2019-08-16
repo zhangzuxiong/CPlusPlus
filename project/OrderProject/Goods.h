@@ -57,7 +57,7 @@ bool judgeEmpotGoodsList(const GoodsList list);
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionGoods(GoodsList* p, const const int position, const Goods goods);
+int insertPositionGoods(GoodsList* p, const int position, const Goods goods);
 
 
 //删除--根据Id删除
@@ -67,6 +67,9 @@ Goods* deleteGoodsById(GoodsList* p, const int Id);
 
 //查找--按照值查询返回查找用户
 Goods* searchGoodsById(const GoodsList list, const int goodsId);
+
+//查找返回商品节点
+GoodsNode* searchGoodsNodeById(const GoodsList list, const int goodsId);
 
 //清空
 void clearGoodsList(GoodsList* p);

@@ -28,6 +28,11 @@ int isEmptyOrderQueue(const OrderQueue queue);
 
 
 
+//查找
+bool searchOrderQueue(const OrderQueue queue,const int orderId);
+
+
+
 // 3.判满 如果为满，则为真；否则为假
 int isFullOrderQueue(const OrderQueue queue);
 

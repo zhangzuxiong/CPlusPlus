@@ -48,7 +48,7 @@ bool judgeEmpotGoodsList(const GoodsList list) {
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionGoods(GoodsList* p, const const int position, const Goods goods) {
+int insertPositionGoods(GoodsList* p, const int position, const Goods goods) {
 	if (p == NULL)
 	{
 		//printf("插入双链表的参数为空\n");
@@ -172,8 +172,8 @@ Goods* deleteGoodsById(GoodsList* p, const int Id) {
 
 		//释放空间
 		free(p->head);
-		p->head = NULL;
 		p->tail = NULL;
+		p->head = NULL;
 	}
 
 	while (index != NULL)
@@ -247,6 +247,26 @@ Goods* searchGoodsById(const GoodsList list, const int goodsId) {
 	return NULL;
 }
 
+
+//查找返回商品节点
+GoodsNode* searchGoodsNodeById(const GoodsList list, const int goodsId) {
+	if (judgeEmpotGoodsList(list))
+	{
+		return NULL;
+	}
+
+	GoodsNode* node = list.head;
+	while (node!=NULL)
+	{
+		if (node->goods.goodsId==goodsId)
+		{
+			return node;
+		}
+		node = node->next;
+	}
+	return NULL;
+}
+
 //清空
 void clearGoodsList(GoodsList* p) {
 	if (p == NULL)
@@ -302,7 +322,10 @@ void saveGoods(const GoodsList list) {
 	//循环遍历将每一个商品写入文件
 	while (node != NULL)
 	{
-		fprintf(file, "%d\t%s\t\%d\t%d\n", node->goods.goodsId, node->goods.name, node->goods.price, node->goods.stock);
+		fprintf(file, "%d\t%s\t\%d\t%d\t%d\n", 
+			node->goods.goodsId, node->goods.name, 
+			node->goods.price, node->goods.stock,
+			node->goods.userId);
 		node = node->next;
 	}
 
@@ -324,7 +347,9 @@ void getGoodsData(GoodsList* p) {
 
 	Goods goods = { 0 };
 
-	fscanf(file, "%d\t%s\t\%d\t%d\n", &goods.goodsId, goods.name, &goods.price, &goods.stock);
+	fscanf(file, "%d\t%s\t\%d\t%d\t%d\n", 
+		&goods.goodsId, goods.name, &goods.price, 
+		&goods.stock,&goods.userId);
 	if (goods.goodsId < 1)
 	{
 		printf("文件为空\n");
@@ -337,7 +362,9 @@ void getGoodsData(GoodsList* p) {
 	{
 
 		
-		fscanf(file, "%d\t%s\t\%d\t%d\n", &goods.goodsId, goods.name, &goods.price, &goods.stock);
+		fscanf(file, "%d\t%s\t\%d\t%d\t%d\n",
+			&goods.goodsId, goods.name, &goods.price,
+			&goods.stock, &goods.userId);		
 		insertPositionGoods(p, p->count + 1, goods);
 	}
 

@@ -18,6 +18,16 @@ typedef struct Order
 	//商家Id
 	int businessId;
 
+	//收货人姓名
+	char name[20];
+
+	//收货人联系方式
+	char phone[15];
+
+
+	//订单收货地址
+	char address[50];
+
 	//下单时间
 	char createDate[20];
 	//状态,
@@ -67,7 +77,7 @@ bool judgeEmpotOrderList(const OrderList list);
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionOrder(OrderList* p, const const int position, const Order order);
+int insertPositionOrder(OrderList* p, const int position, const Order order);
 
 
 //删除--根据Id删除
@@ -80,6 +90,13 @@ Order* deletePositionOrderList(OrderList* p, const int position);
 
 //查找--按照值查询返回查找用户
 Order* searchOrderById(const OrderList list, const int orderId);
+
+
+//查找返回订单节点
+OrderNode* searchOrderNodeById(const OrderList list, const int orderId);
+
+//更改订单
+void updateOrderByOrder(OrderList* list,const Order order);
 
 //清空
 void clearOrderList(OrderList* p);

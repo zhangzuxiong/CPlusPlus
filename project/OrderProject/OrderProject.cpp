@@ -61,10 +61,14 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 	Goods* goods = NULL;
 	Goods newGoods = { 0 };
 	Order* order = NULL;
+	OrderNode* node = NULL;
+	Order o = { 0 };
 
 	OrderQueue queue = { 0 };
 	initOrderQueue(&queue);
 
+
+	//读取该商家的订单，保存到循环队列
 	while (user->orderList[i] > 0)
 	{
 		order = searchOrderById(*orderList, user->orderList[i++]);
@@ -83,9 +87,16 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 
 		switch (flag)
 		{
+
+		//查看商品
 		case 1:
 			system("cls");
 			i = 0;
+			if (user->goodsList[i]<1)
+			{
+				printf("您还没有与添加商品\n");
+				break;
+			}
 			while (user->goodsList[i] > 0)
 			{
 				//Goods* goods = searchGoodsById(*goodsList, user->goodsList[i]);
@@ -100,6 +111,7 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 
 			break;
 
+		//添加商品
 		case 2:
 			while (true)
 			{
@@ -135,8 +147,26 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			}
 			break;
 
+		//删除商品
 		case 3:
 			system("cls");
+			i = 0;
+			if (user->goodsList[i] < 1)
+			{
+				printf("您还没有商品可以删除\n");
+				break;
+			}
+			while (user->goodsList[i] > 0)
+			{
+				//Goods* goods = searchGoodsById(*goodsList, user->goodsList[i]);
+				goods = searchGoodsById(*goodsList, user->goodsList[i]);
+				if (goods != NULL)
+				{
+					printGoodsInfo(*goods);
+					printf("\n");
+				}
+				i++;
+			}
 			del = 0;
 			printf("请输入删除商品的ID:");
 			scanf(" %d", &del);
@@ -146,20 +176,33 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			}
 			break;
 
+		//打印商家订单
 		case 4:
 			system("cls");
 			j = 0;
-			while (user->orderList[j] != 0 && j < SIZE)
+			if (user->orderList[j]<1)
+			{
+				printf("您没有订单需要处理\n");
+				break;
+			}
+			while (user->orderList[j] > 0 && j < SIZE)
 			{
 				order = searchOrderById(*orderList, user->orderList[j]);
-				printOrder(*userList, *order);
-				i = 0;
-				while (order->goodsId[i] > 0)
+				if (order!=NULL)
 				{
-					printGoodsInfo(*searchGoodsById(*goodsList, order->goodsId[i]));
-					printf("\t%d个\n", order->count[i++]);
+					printOrder(*userList, *order);
+					i = 0;
+					while (order->goodsId[i] > 0)
+					{
+						printGoodsInfo(*searchGoodsById(*goodsList, order->goodsId[i]));
+						printf("\t%d个\n", order->count[i++]);
+					}
+					printf("\n\n");
 				}
-				printf("\n\n");
+				else
+				{
+					printf("没有商品了\n");
+				}
 				j++;
 			}
 
@@ -169,6 +212,13 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 		case 5:
 			//修改订单
 			//打印订单信息
+
+			if (isEmptyOrderQueue(queue))
+			{
+				printf("您没有订单可以修改\n");
+				break;
+			}
+
 			printOrderList(*userList, *goodsList, queue.list);
 
 			i = 0;
@@ -176,10 +226,30 @@ void business(User* user, UserList* userList, GoodsList* goodsList, OrderList* o
 			scanf(" %d", &i);
 
 			order = searchOrderById(queue.list, i);
+
+			//printf(" order=%p\n", order);
+
+			//node = searchOrderNodeById(queue.list, i);
+
 			if (order!=NULL)
 			{
-				//修改订单收货地址,收件地址存放在用户信息中
+				o.orderId = i;
+
+				//修改订单中的收货地址、收件人、联系方式
 				printf("请输入新的收货地址:");
+				scanf(" %s", o.address);
+
+				printf("请输入新的收件人:");
+				scanf(" %s", o.name);
+
+				printf("请输入新的收件人的联系信息:");
+				scanf(" %s", o.phone);
+
+				updateOrderByOrder(orderList, o);
+			}
+			else
+			{
+				printf("输入的订单ID有误\n");
 			}
 
 			break;
@@ -210,6 +280,7 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 	int n = 0;
 	Order order = { 0 };
 	Goods* goods = NULL;
+	Order* o = NULL;
 	while (flag)
 	{
 		printf("\n\n1.查看商品 \n2.查看订单 \n3.下单 \n4.退单 \n5.修改个人信息 \n0.退出 \n请选择:");
@@ -218,12 +289,21 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 		{
 		case 1:
 			//打印所有商品信息
+			if (judgeEmpotGoodsList(*goodsList))
+			{
+				printf("没有商品\n");
+			}
 			printGoodsrList(*goodsList);
 			break;
 
+		//查看订单
 		case 2:
 			system("cls");
 			i = 0;
+			if (user->orderList[i]<1)
+			{
+				printf("订单为空\n");
+			}
 			while (user->orderList[i] > 0)
 			{
 				order = { 0 };
@@ -232,9 +312,17 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 				j = 0;
 				while (order.goodsId[j] > 0)
 				{
-					printGoodsInfo(*searchGoodsById(*goodsList, order.goodsId[j]));
-					printf(",%d个\n", order.count[j]);
-					j++;
+					goods = searchGoodsById(*goodsList, order.goodsId[j]);
+					if (goods!=NULL)
+					{
+						printGoodsInfo(*goods);
+						printf(",%d个\n", order.count[j]);
+						j++;
+					}
+					else
+					{
+						printf("订单中没有商品了\n");
+					}
 				}
 				i++;
 				printf("\n\n");
@@ -242,7 +330,7 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 
 			break;
 
-		//一个订单只能购买一个用户的商品
+		//一个订单只能购买一个用户的一个或多个商品
 		case 3:
 			system("cls");
 			//下单
@@ -253,12 +341,53 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 
 			printf("请输入下单时间:");
 			scanf(" %s", &order.createDate);
+
+			strcpy(order.name, user->name);
+			strcpy(order.phone, user->phone);
+			strcpy(order.address, user->address);
 			order.status = 1;
+
+
 			order.userId = user->userId;
 
-			n = 0;
+			/*printf("商品信息:\n");
+			printGoodsrList(*goodsList);
+			printf("请选择商品：");
+			scanf(" %d", &in);*/
+
+			//goods = searchGoodsById(*goodsList, in);
+
+			//if (goods!=NULL)
+			//{
+			//	printf("请输入购买数量:");
+			//	j = 0;
+			//	scanf(" %d", &j);
+			//	if (j > goods->stock || j < 1)
+			//	{
+			//		printf("库存不足\n");
+			//	}
+			//	else
+			//	{
+
+			//		order.businessId = goods->userId;
+
+
+			//		goods->stock = goods->stock - j;
+
+			//		//保存商品ID和商品数量
+			//		insertArray(order.goodsId, in, SIZE);
+			//		insertArray(order.count, j, SIZE);
+			//	}
+			//}
+
+
+
+
 
 			i = 1;
+
+			/*printf("是否继续添加新的商品(1:继续,0:不继续):");
+			scanf(" %d", &i);*/
 			while (i)
 			{
 				in = 1;
@@ -270,25 +399,40 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 				if (searchGoodsById(*goodsList, in))
 				{
 					goods = searchGoodsById(*goodsList, in);
-					n = goods->userId;
-					pre = n;
-					printf("请输入购买数量:");
-					j = 0;
-					scanf(" %d", &j);
-					if (j > goods->stock || j < 1)
+
+					if (order.businessId<=0)
 					{
-						printf("库存不足\n");
+						order.businessId = goods->userId;
 					}
-					else
+
+					if (order.businessId!=goods->userId)
 					{
+						printf("选择的商品不属于同一个商家\n");
+					}
+					else if (order.businessId==goods->userId)
+					{
+						//order.businessId = goods->userId;
+					
+						printf("请输入购买数量:");
+						j = 0;
+						scanf(" %d", &j);
+						if (j > goods->stock || j < 1)
+						{
+							printf("库存不足\n");
+						}
+						else
+						{
 						
-						order.businessId = n;
 
+							goods->stock = goods->stock - j;
 
-						goods->stock = goods->stock - j;
-						insertArray(order.goodsId, in, SIZE);
-						insertArray(order.count, j, SIZE);
+							//保存商品ID和商品数量
+							insertArray(order.goodsId, in, SIZE);
+							insertArray(order.count, j, SIZE);
+						}
 					}
+					
+
 				}
 				else
 				{
@@ -309,6 +453,11 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 			//退单
 			system("cls");
 			i = 0;
+			if (user->orderList[i]<1)
+			{
+				printf("没有订单可以退单\n");
+				break;
+			}
 			while (user->orderList[i] > 0)
 			{
 				printOrder(userList, *searchOrderById(*orderList, user->orderList[i]));
@@ -326,7 +475,6 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 
 			printf("请输入退单的订单号:");
 			scanf(" %d", &in);
-			order = *searchOrderById(*orderList, in);
 			if (searchOrderById(*orderList, in))
 			{
 
@@ -341,6 +489,7 @@ void buyer(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 				deleteOrderById(orderList, in);
 				deleteArray(user->orderList, in, SIZE);
 				deleteArray(searchUserById(userList, order.businessId)->orderList, in, SIZE);
+				printf("退单成功\n");
 			}
 			break;
 
@@ -394,7 +543,7 @@ void rider(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 		order = *searchOrderById(*orderList, user->orderList[i++]);
 		putOrderQueue(&queue, order);
 	}
-
+	Order* o = NULL;
 	while (flag)
 	{
 		printf("\n\n1.查看所有订单\n2.送货\n3.查看自己配送的订单\n0.退出\n");
@@ -406,11 +555,22 @@ void rider(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 		case 1:
 			system("cls");
 			i = 1;
+			if (judgeEmpotOrderList(*orderList))
+			{
+				printf("没有订单可以派送\n");
+				break;
+			}
 			while (i)
 			{
 				printOrderList(userList, *goodsList, *orderList);
 				printf("请选择派送的订单(按0结束):");
 				scanf(" %d", &i);
+
+				//队列中不存在
+				if (searchOrderQueue(queue, i))
+				{
+					printf("您已经选择了该订单\n");
+				}
 				if (searchOrderById(*orderList, i))
 				{
 					order = *searchOrderById(*orderList, i);
@@ -427,24 +587,40 @@ void rider(User* user, const UserList userList, GoodsList* goodsList, OrderList*
 			break;
 		case 3:
 			system("cls");
+			if (isEmptyOrderQueue(queue))
+			{
+				printf("您暂时没有需要派送的订单\n");
+				break;
+			}
 			printOrderQueue(userList, *goodsList, queue);
 			break;
 
 		case 2:
 			//送货
 			system("cls");
-			printf("您正在配送订单,送货的订单为:\n");
-
-			order = *getOrderQueue(&queue);
-			printOrder(userList, order);
-			i = 0;
-			while (order.goodsId[i] > 0)
+			if (isEmptyOrderQueue(queue))
 			{
-				printGoodsInfo(*searchGoodsById(*goodsList, order.goodsId[i++]));
-				printf("\n");
+				printf("您暂时没有需要派送的订单\n");
+				break;
 			}
-			printf("\n\n");
-			order.status = 3;
+			o = getOrderQueue(&queue);
+			if (o!=NULL)
+			{
+				printf("您正在配送订单,送货的订单为:\n");
+				printOrder(userList, *o);
+				i = 0;
+				while (o->goodsId[i] > 0)
+				{
+					printGoodsInfo(*searchGoodsById(*goodsList, o->goodsId[i++]));
+					printf("\n");
+				}
+				printf("\n\n");
+				o->status = 3;
+			}
+			else
+			{
+				printf("您目前没有配送的订单\n");
+			}
 			break;
 		case 0:
 			clearOrderQueue(&queue);
@@ -478,7 +654,7 @@ void menu() {
 	int select = 1;
 	while (select)
 	{
-		printf("\t\t1.注册\n\t\t2.登录\n\t\t0.退出\n请选择:");
+		printf("\n\t\t1.注册\n\t\t2.登录\n\t\t3.查看所有用户\n\t\t0.退出\n请选择:");
 		scanf(" %d", &select);
 		switch (select)
 		{
@@ -511,6 +687,10 @@ void menu() {
 			}
 			break;
 
+		case 3:
+			printUserList(userList);
+			break;
+
 		case 0:
 			//将用户信息、商品信息、订单信息保存到文件
 			saveUserData(userList);
@@ -521,7 +701,6 @@ void menu() {
 			printf("输入有误\n");
 			break;
 		}
-		system("cls");
 	}
 
 }
@@ -531,7 +710,7 @@ void testUserFile() {
 	initUserList(&list);
 	getUserData(&list);
 	printUserList(list);
-	/*User user1 = { 3,"111","一一一","1000","武汉1",1,{1},{1} };
+	User user1 = { 3,"111","一一一","1000","武汉1",1,{1},{1} };
 	User user2 = { 2,"222","二二二","2000","武汉2",2,{2},{2} };
 	User user3 = { 1,"333","三三三","3000","武汉3",3,{3,4,5},{3,4,5} };
 	insertPositionUser(&list, list.count + 1, user1);
@@ -539,7 +718,7 @@ void testUserFile() {
 	insertPositionUser(&list, list.count + 1, user3);
 
 	printUserList(list);
-	saveUserData(list);*/
+	saveUserData(list);
 }
 
 void testOrderFile() {
@@ -548,9 +727,9 @@ void testOrderFile() {
 
 	getOrderInfo(&list);
 
-	Order order1 = { 1,1,2,"2011",1,{1,2,3},{4,5,6} };
-	Order order2 = { 2,3,4,"2013",2,{1,2,3},{4,5,6} };
-	Order order3 = { 3,5,6,"2015",3,{1,2,3},{4,5,6} };
+	Order order1 = { 1,1,2,"2011","","","",1,{1,2,3},{4,5,6} };
+	Order order2 = { 2,3,4,"2013","","","",2,{1,2,3},{4,5,6} };
+	Order order3 = { 3,5,6,"2015","","","",3,{1,2,3},{4,5,6} };
 
 	insertPositionOrder(&list, 1, order1);
 	insertPositionOrder(&list, 1, order2);
@@ -561,6 +740,21 @@ void testOrderFile() {
 
 int main()
 {
+	/*const int len = 10;
+	int arr[len] = { 0 };
+	insertArray(arr, 1, len);
+	insertArray(arr, 2, len);
+	insertArray(arr, 3, len);
+	insertArray(arr, 5, len);
+	printArray(arr, len);
+
+	deleteArray(arr, 1, len);
+
+	printArray(arr, len);*/
+
+
+	//return 0;
+
 	//testOrderFile();
 	//testUserFile();
 	menu();

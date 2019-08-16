@@ -68,6 +68,29 @@ int isFullOrderQueue(const OrderQueue queue) {
 
 
 
+//查找
+bool searchOrderQueue(const OrderQueue queue, const int orderId) {
+	if (isEmptyOrderQueue(queue))
+	{
+		return false;
+	}
+
+	OrderNode* temp = queue.list.head;
+	while (temp!=NULL)
+	{
+		if (temp->order.orderId==orderId)
+		{
+			return true;
+		}
+		temp = temp->next;
+	}
+
+	return false;
+}
+
+
+
+
 // 4.放入,p 表示需要操作的队列是谁， num 表示需要放入队尾的订单是多少
 void putOrderQueue(OrderQueue* p, const Order order) {
 

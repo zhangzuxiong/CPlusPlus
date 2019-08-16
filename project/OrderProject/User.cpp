@@ -48,7 +48,7 @@ bool judgeEmpotUserList(const UserList list) {
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionUser(UserList* p, const const int position, const User user) {
+int insertPositionUser(UserList* p, const int position, const User user) {
 	if (p == NULL)
 	{
 		//printf("插入双链表的参数为空\n");

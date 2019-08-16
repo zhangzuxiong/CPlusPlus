@@ -1,0 +1,8 @@
+﻿  Order.cpp
+E:\Visual Studio\workspace\CPlusPlus\project\OrderProject\Order.cpp(503,17): warning C4129:  “%”: 不可识别的字符转义序列
+E:\Visual Studio\workspace\CPlusPlus\project\OrderProject\Order.cpp(543,15): warning C4129:  “%”: 不可识别的字符转义序列
+  OrderProject.cpp
+  正在生成代码...
+E:\Visual Studio\workspace\CPlusPlus\project\OrderProject\Order.cpp(567,16): warning C4129:  “%”: 不可识别的字符转义序列
+  LINK : 没有找到 E:\Visual Studio\workspace\CPlusPlus\project\x64\Debug\OrderProject.exe 或上一个增量链接没有生成它；正在执行完全链接
+  OrderProject.vcxproj -> E:\Visual Studio\workspace\CPlusPlus\project\x64\Debug\OrderProject.exe

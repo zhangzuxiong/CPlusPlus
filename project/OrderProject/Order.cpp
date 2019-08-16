@@ -48,7 +48,7 @@ bool judgeEmpotOrderList(const OrderList list) {
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionOrder(OrderList* p, const const int position, const Order order) {
+int insertPositionOrder(OrderList* p, const int position, const Order order) {
 	if (p == NULL)
 	{
 		//printf("插入双链表的参数为空\n");
@@ -174,6 +174,8 @@ Order* deleteOrderById(OrderList* p, const int Id) {
 		free(p->head);
 		p->head = NULL;
 		p->tail = NULL;
+		p->count--; 
+		return res;
 	}
 
 	while (index != NULL)
@@ -329,12 +331,67 @@ Order* searchOrderById(const OrderList list, const int orderId) {
 	{
 		if (temp->order.orderId == orderId)
 		{
+			//printf("&order=%p\n", &(temp->order));
 			return &(temp->order);
 		}
 		//指向下一个查找的位置
 		temp = temp->next;
 	}
 	printf("没有找到\n");
+	return NULL;
+}
+
+
+
+//更改订单
+void updateOrderByOrder(OrderList* list, const Order order) {
+
+	if (list==NULL)
+	{
+		return;
+	}
+
+	if (judgeEmpotOrderList(*list))
+	{
+		return;
+	}
+
+	OrderNode* node = list->head;
+	while (node!=NULL)
+	{
+		if (node->order.orderId==order.orderId)
+		{
+			strcpy(node->order.name, order.name);
+			strcpy(node->order.phone, order.phone);
+			strcpy(node->order.address, order.address);
+
+			return;
+		}
+		node = node->next;
+	}
+
+	return;
+}
+
+
+
+//查找返回订单节点
+OrderNode* searchOrderNodeById(const OrderList list, const int orderId) {
+	if (judgeEmpotOrderList(list))
+	{
+		return NULL;
+	}
+
+	OrderNode* node = list.head;
+	while (node!=NULL)
+	{
+		if (node->order.orderId==orderId)
+		{
+			return node;
+		}
+
+		node = node->next;
+	}
 	return NULL;
 }
 
@@ -352,6 +409,10 @@ void clearOrderList(OrderList* p) {
 
 	initOrderList(p);
 }
+
+
+
+
 
 //打印一个数组
 void printArray(int* p, int length) {
@@ -381,7 +442,7 @@ void printOrderList(const UserList userList,const GoodsList goodsList,const Orde
 	OrderNode* temp = list.head;
 	User buyer = { 0 };
 	User bussiness = { 0 };
-	Goods goods = { 0 };
+	Goods* goods = NULL;
 
 
 	while (temp != NULL)
@@ -396,8 +457,16 @@ void printOrderList(const UserList userList,const GoodsList goodsList,const Orde
 		int i = 0;
 		while (temp->order.goodsId[i]>0)
 		{
-			printGoodsInfo(*searchGoodsById(goodsList, temp->order.goodsId[i]));
-			printf(",总%d个\n", temp->order.count[i++]);
+			goods = searchGoodsById(goodsList, temp->order.goodsId[i]);
+			if (goods!=NULL)
+			{
+				printGoodsInfo(*goods);
+				printf(",总%d个\n", temp->order.count[i++]);
+			}
+			else
+			{
+				printf("没有商品信息了\n");
+			}
 		}
 
 		printf("\n\n");
@@ -409,10 +478,10 @@ void printOrderList(const UserList userList,const GoodsList goodsList,const Orde
 
 //打印一个订单
 void printOrder(const UserList userList, const Order order) {
-	User buyer = *searchUserById(userList, order.userId);
+	//User buyer = *searchUserById(userList, order.userId);
 	User bussiness = *searchUserById(userList, order.businessId);
 	printf("订单ID:%d,买家姓名:%s,买家联系电话:%s,收件地址:%s,商家名称:%s,商家联系电话:%s,发货地址:%s,下单时间:%s\n", 
-		order.orderId, buyer.name,buyer.phone,buyer.address, bussiness.name,bussiness.phone,bussiness.address, order.createDate);
+		order.orderId, order.name,order.phone,order.address, bussiness.name,bussiness.phone,bussiness.address, order.createDate);
 }
 
 
@@ -430,10 +499,11 @@ void saveOrderInfo(const OrderList list) {
 	//循环遍历将每个订单写入文件
 	while (node != NULL)
 	{
-		//保存订单ID、用户ID、商家ID、下单时间、状态
-		fprintf(file, "%d\t%d\t\%d\t\%s\t%d\t",
+		//保存订单ID、用户ID、商家ID、下单时间、状态、收货人姓名、收货人联系方式、收货地址
+		fprintf(file, "%d\t%d\t\%d\t\%s\t%d\t%s\t%s\t%s\t",
 			node->order.orderId, node->order.userId, node->order.businessId,
-			node->order.createDate, node->order.status);
+			node->order.createDate, node->order.status,node->order.name,
+			node->order.phone,node->order.address);
 		int i = 0;
 
 		//保存商品信息
@@ -470,9 +540,10 @@ void getOrderInfo(OrderList* p) {
 
 	Order order = { 0 };
 
-	fscanf(file, "%d\t%d\t\%d\t\%s\t%d\t",
+	fscanf(file, "%d\t%d\t\%d\t\%s\t%d\t%s\t%s\t%s\t",
 		&order.orderId, &order.userId, &order.businessId,
-		order.createDate, &order.status);
+		order.createDate, &order.status, order.name,
+		order.phone, order.address);
 	if (order.userId < 1)
 	{
 		printf("文件为空\n");
@@ -480,6 +551,7 @@ void getOrderInfo(OrderList* p) {
 	}
 	int i = 0;
 
+	//读取商品信息
 	fscanf(file, "%d\t%d\t", &order.goodsId[i], &order.count[i]);
 	while (order.goodsId[i] > 0)
 	{
@@ -492,9 +564,10 @@ void getOrderInfo(OrderList* p) {
 	//将文件内容读取出来
 	while (!feof(file))
 	{
-		fscanf(file, "%d\t%d\t\%d\t\%s\t%d\t",
+		fscanf(file, "%d\t%d\t\%d\t\%s\t%d\t%s\t%s\t%s\t",
 			&order.orderId, &order.userId, &order.businessId,
-			order.createDate, &order.status);
+			order.createDate, &order.status, order.name,
+			order.phone, order.address);
 		i = 0;
 
 		fscanf(file, "%d\t%d\t", &order.goodsId[i], &order.count[i]);

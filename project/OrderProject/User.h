@@ -70,7 +70,7 @@ bool judgeEmpotUserList(const UserList list);
 
 
 //插入，在第position个位置插入一个用户
-int insertPositionUser(UserList* p, const const int position, const User user);
+int insertPositionUser(UserList* p, const int position, const User user);
 
 
 //删除--根据Id删除
