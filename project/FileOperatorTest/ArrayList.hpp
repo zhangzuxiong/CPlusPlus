@@ -17,6 +17,8 @@ ArrayList<T>::~ArrayList() {
 //往数组中添加一个数据
 template <class T>
 void ArrayList<T>::add(const T data) {
+	
+	//数组已满动态申请内存
 	if (size == length)
 	{
 		T* newList = new T[length + 1];;
